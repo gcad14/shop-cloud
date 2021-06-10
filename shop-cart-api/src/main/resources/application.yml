@@ -1,0 +1,43 @@
+server:
+  port: 8013
+spring:
+  application:
+    name: shop-cart-api
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    druid:
+      initial-size: 10
+      max-active: 10
+      max-wait: 60000
+      min-evictable-idle-time-millis: 300000
+      min-idle: 5
+      test-on-borrow: false
+      test-on-return: false
+      test-while-idle: true
+      time-between-eviction-runs-millis: 60000
+      validation-query: SELECT 1
+      validation-query-timeout: 2000
+    password: root
+    type: com.alibaba.druid.pool.DruidDataSource
+    url: jdbc:mysql://localhost:3306/2525?characterEncoding=utf8&serverTimezone=CTT
+    username: root
+
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: false
+  global-config:
+    db-config:
+      id-type: auto
+      table-prefix: t_
+  mapper-locations: classpath*:mappers/*.xml
+# 设置该服务中心的名字
+eureka:
+  client:
+    register-with-eureka: true #注册到eureka的注册中心
+    fetch-registry: true  # 获取注册实例回来
+    service-url:
+      defaultZone: http://replica1:8000/eureka,http://localhost:8000/eureka  #  指定服务中心的位置#  server:
+#    enable-self-preservation: false # 关闭保护模式
+sku:
+  count:
+    limit: 10

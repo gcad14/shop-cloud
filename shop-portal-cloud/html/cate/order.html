@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=EDGE">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>订单列表</title>
+    <link href="../../js/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+<table class="table table-bordered" id="orderTable">
+    <thead>
+      <tr>
+       <th>订单编号</th>
+       <th>金额</th>
+       <th>创建时间</th>
+       <th>订单状态</th>
+       <th>收件人姓名</th>
+       <th>地址</th>
+       <th>电话</th>
+       <th>操作</th>
+      </tr>
+    </thead>
+
+    <tbody>
+
+    </tbody>
+</table>
+<script src="../../js/jquery-3.3.1.js"></script>
+<script src="../../js/jquery.cookie.min.js"></script>
+<script type="text/javascript" src="../../js/common/common.js"></script>
+<script type="text/javascript" src="../../js/common/server_url.js"></script>
+
+
+<script>
+    $(function () {
+        initOrderList();
+    })
+
+    function initOrderList() {
+        $.ajax({
+            type: "post",
+            url: server_url + "/orders/findOrderList",
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader(AUTH, $.cookie(TOKEN));
+            }, success: function (res) {
+                if (res.code == 200) {
+                    var v_orderList = res.data;
+                    var v_html = "";
+                    for (let v_item of v_orderList) {
+                        var v_status = v_item.status;
+                        var v_statusText = "";
+                        console.log(v_status);
+                        if (v_status==0){
+                            v_statusText = "未支付";
+                        }else if(v_status == 10){
+                            v_statusText = "已支付";
+                        }
+                        else if(v_status == 40){
+                            v_statusText = "交易关闭";
+                        }
+                        v_html += '<tr>';
+                        v_html += '<td>' + v_item.id + '</td>';
+                        v_html += '<td style="color: red;font-weight: bold">￥' + v_item.totalPrice + '</td>';
+                        v_html += '<td>' + v_item.createTime + '</td>';
+                        v_html += '<td>' + v_statusText + '</td>';
+                        v_html += '<td>' + v_item.recipientName + '</td>';
+                        v_html += '<td>' + v_item.recipientAdd + '</td>';
+                        v_html += '<td>' + v_item.recipientPhone + '</td>';
+                        v_html += '<td>';
+                        v_html += '<a href="#" onclick="cancel(\''+v_item.id+'\')">取消订单/</a>';
+                        v_html += '<a href="#" onclick="payOrder(\''+v_item.id+'\')">支付</a>'
+                        v_html += '</td>';
+                        v_html += '</tr>';
+                    }
+                    $("#orderTable tbody").html(v_html);
+                } else if (res.code == 6008 || res.code == 6010 || res.code == 6005) {//登录超时  信息不完整  头信息为空
+                    location.href = "list.html";//跳转到登录页面
+                }
+            }
+        })
+    }
+
+    function cancel(id) {
+        $.ajax({
+            type: "post",
+            url: server_url + "/orders/cancelOrder/" + id,
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader(AUTH, $.cookie(TOKEN));
+            },
+            success:function (res) {
+                if(res.code == 200){
+                    initOrderList();
+                }
+            }
+        })
+    }
+
+    //支付订单
+    function payOrder(id) {
+        $.ajax({
+            type: "post",
+            data:{"orderId":id},
+            url: server_url+"pay/payOrder",
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader(AUTH, $.cookie(TOKEN));
+            },success:function (res) {
+                //查询订单信息
+                /*initOrder();*/
+                console.log(res);
+                if (res.code==200){
+                    $("body").html(res.data);
+                }
+            }
+        })
+    }
+
+</script>
+
+
+</body>
+
+</html>

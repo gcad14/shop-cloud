@@ -1,0 +1,13 @@
+server:
+  port: 8000
+# 设置该服务中心的名字
+eureka:
+  instance:
+    hostname: localhost
+  client:
+    register-with-eureka: false #自己不注册自己
+    fetch-registry: false  # 不去检索其他服务
+    service-url:
+      defaultZone: http://replica1:8002/eureka  #  指定服务中心的位置
+#  server:
+#    enable-self-preservation: false # 关闭保护模式

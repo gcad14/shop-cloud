@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+    <link rel="stylesheet" href="../../js/bootstrap/css/bootstrap.min.css">
+    <link rel="icon" href="../../js/shop/assets/img/favicon.ico">
+    <link rel="stylesheet" type="text/css" href="../../js/shop/css/webbase.css"/>
+    <link rel="stylesheet" type="text/css" href="../../js/shop/css/pages-JD-index.css"/>
+    <link rel="stylesheet" type="text/css" href="../../js/shop/css/widget-jquery.autocomplete.css"/>
+    <link rel="stylesheet" type="text/css" href="../../js/shop/css/widget-cartPanelView.css"/>
+    <title>找回密码</title>
+
+</head>
+<body>
+<script src="../../js/jquery-3.3.1.js"></script>
+<script src="../../js/jquery.cookie.min.js"></script>
+<script src="../../js/bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../../js/shop/js/pages/index.js"></script>
+<script type="text/javascript" src="../../js/common/server_url.js"></script>
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <form class="form-horizontal">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">邮箱:</label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control" id="mailName" placeholder="请输入邮箱">
+                        <span id="memberIsp"></span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">验证:</label>
+
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control" placeholder="请输入验证码" id="code"/>
+                        <span class="input-group-btn" id="imageCodeDiv">
+
+                            </span>
+                        <span class="input-group-btn">
+                                 <button type="button" class="btn btn-link" onclick="inioCode()">看不清，换一张</button>
+                            </span>
+                    </div>
+                </div>
+                <!--图片编码-->
+                <div style="text-align: center;">
+                    <button type="button" class="btn btn-primary" onclick="findPassword()"><span
+                            class="glyphicon glyphicon-search"></span>提交
+                    </button>
+                    <button type="reset" class="btn btn-default"><span class="glyphicon glyphicon-refresh"></span>重置
+                    </button>
+                </div>
+            </form>
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+    $(function () {
+        inioCode()
+    })
+
+    //提交信息进行验证找回密码
+    function findPassword() {
+        var v_param = {};
+        v_param.mail = $("#mailName").val();
+        v_param.key = $.cookie("cookieId")
+        v_param.code = $("#code").val();
+        $.ajax({
+            type: "post",
+            url: server_url + "/meber/getMail",
+            data: v_param,
+            success: function (res) {
+                if (res.code == 200) {
+                    location.href = "list.html";
+                }
+            }
+        })
+    }
+
+    //获取验证码
+    function inioCode() {
+        var v_key = $.cookie("cookieId")
+        $.ajax({
+            type: "get",
+            data: {"id": v_key},
+            url: server_url + "/code2",
+            success: function (res) {
+                if (res.code == 200) {
+                    var v_imageCode = res.data.imageBase64;
+                    // console.log(v_imageCode);
+                    $("#imageCodeDiv").html('<img  src="data:image/jpg;base64,' + v_imageCode + '">')
+                    $.cookie("cookieId", res.data.id);
+                }
+            }
+        })
+
+    }
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+    <link rel="stylesheet" href="../../js/bootstrap/css/bootstrap.min.css">
+    <link rel="icon" href="../../js/shop/assets/img/favicon.ico">
+    <link rel="stylesheet" type="text/css" href="../../js/shop/css/webbase.css"/>
+    <link rel="stylesheet" type="text/css" href="../../js/shop/css/pages-JD-index.css"/>
+    <link rel="stylesheet" type="text/css" href="../../js/shop/css/widget-jquery.autocomplete.css"/>
+    <link rel="stylesheet" type="text/css" href="../../js/shop/css/widget-cartPanelView.css"/>
+
+    <title>商城首页</title>
+</head>
+<body>
+<nav class="navbar navbar-default">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                    data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">飞狐乐购后台管理系统</a>
+        </div>
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav navbar-right" id="heradleId">
+                <li><a href="javascript:;">购物车</a></li>
+            </ul>
+        </div><!-- /.navbar-collapse -->
+    </div><!-- /.container-fluid -->
+</nav>
+
+<div id="cateTableDiv">
+    <!--顶部-->
+    <div class="nav-top">
+        <!--头部-->
+        <div class="header">
+            <div class="py-container">
+                <div class="yui3-g NavList">
+                    <div class="yui3-u Left all-sort">
+                        <h4>全部商品分类</h4>
+                    </div>
+                    <div class="yui3-u Center navArea">
+                        <ul class="nav">
+                            <li class="f-item">服装城</li>
+                            <li class="f-item">美妆馆</li>
+                            <li class="f-item">品优超市</li>
+                            <li class="f-item">全球购</li>
+                            <li class="f-item">闪购</li>
+                            <li class="f-item">团购</li>
+                            <li class="f-item">有趣</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--列表-->
+<div class="sort">
+    <div class="py-container">
+        <div class="yui3-g SortList ">
+            <div class="yui3-u Left all-sort-list">
+                <div class="all-sort-list2" id="cateDiv">
+                    <div class="item">
+                        <h3><a href="">图书、音像、数字商品</a></h3>
+                        <div class="item-list clearfix">
+                            <div class="subitem">
+                                <dl class="fore1">
+                                    <dt><a href="">电子书</a></dt>
+                                    <dd><a href="">免费</a><a href="">小说</a></em><a href="">励志与成功</a><em><a
+                                            href="">婚恋/两性</a></em><em><a href="">文学</a></em><em><a
+                                            href="">经管</a></em><em><a href="">畅读VIP</a></em></dd>
+                                </dl>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-success">
+                <div class="panel-heading">商品列表</div>
+                <div class="panel-body" id="productListDiv">
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-success">
+                <div class="panel-heading">热销品牌</div>
+                <div class="panel-body" id="brandListDiv">
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="../../js/jquery-3.3.1.js"></script>
+<script src="../../js/jquery.cookie.min.js"></script>
+<script src="../../js/bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../../js/shop/js/pages/index.js"></script>
+<script type="text/javascript" src="../../js/common/server_url.js"></script>
+<script>
+    $(function () {
+        cateIds();//查询分类数据
+        infoSku();//查询商品的信息列表
+        findMember();//判断会员是否登录
+    })
+
+    function logout() {//注销
+        $.ajax({
+            type: "get",
+            url: "http://localhost:9000/member/api/meber/logut",
+            beforeSend: function (xhr) {
+                var v_toKen = $.cookie(TOKEN);
+                xhr.setRequestHeader(AUTH, v_toKen);
+            },
+            success: function (res) {
+                if (res.code == 200) {
+                    $.removeCookie(TOKEN)
+                    location.href = "list.html";
+                }
+
+            }
+        })
+    }
+
+    function findMember() {
+        $.ajax({
+            type: "get",
+            url: "http://localhost:9000/member/api/meber/findMember",
+            beforeSend: function (xhr) {
+                var v_toKen = $.cookie(TOKEN);
+                xhr.setRequestHeader(AUTH, v_toKen);
+            },
+            success: function (res) {
+                if (res.code == 200) {
+                    findCartCount();
+                    console.log(res);
+                    $("#heradleId").html('<li><a href="#">欢迎' + res.data.nickName + '</a></li>' +
+                        '<li><a href="#" onclick="logout()">注销</a></li>' +
+                        '<li><a href="update.html" onclick="updatePasswo()">修改密码</a></li>\n' +
+                        '<li><a href="cart.html" id="cartCountDiv">购物车</a></li>\n')
+                } else {
+                    $("#heradleId").html('<li><a href="list.html">请登录</a></li>' +
+                        '<li><a href="add.html">注册</a></li>\n')
+
+                }
+            }
+        })
+    }
+
+    function findCartCount() {
+        $.ajax({
+            type: "get",
+            url: "http://localhost:9000/cate/api/cart/findCartCount",
+            beforeSend: function (xhr) {
+                var v_toKen = $.cookie(TOKEN);
+                xhr.setRequestHeader(AUTH, v_toKen);
+            },
+            success: function (res) {
+                if (res.code == 200) {
+                    var count = res.data ? res.data : 0;
+                    $("#cartCountDiv").html("购物车(" + count + ")");
+                }
+            }
+        })
+    }
+
+    var v_skuList;
+
+    function infoSku() {
+        $.ajax({
+            type: "get",
+            url: "http://localhost:9000/goods/api/skus",
+            // beforeSend: function (xhr) {
+            //     var v_toKen = $.cookie(TOKEN);
+            //     xhr.setRequestHeader(AUTH, v_toKen);
+            // },
+            success: function (res) {
+                v_skuList = res.data;
+                if (v_skuList && v_skuList.length > 0) {
+                    var v_html = "";
+                    for (let sku of v_skuList) {
+                        v_html += '<div>\n' +
+                            '                        <div class="col-sm-6 col-md-4">\n' +
+                            '                            <div class="thumbnail">\n' +
+                            '                                <img src="' + sku.image + '" title="' + sku.skuName + '" width="200px" height="200px">\n' +
+                            '                                <div class="caption">\n' +
+                            '                                    <h3 class="btn-success">￥' + sku.price + '</h3>\n' +
+                            '                                    <p class="b-primary">' + sku.skuName + '</p>\n' +
+                            '                                    <p>限量:' + sku.stock + '</p>\n' +
+                            '                                    <p>' +
+                            '<a href="javascript:;" class="btn btn-primary" role="button" onclick="buy(' + sku.id + ')">' +
+                            '<span class="glyphicon glyphicon-shopping-cart">添加购物车</span></a>' +
+                            '<a href="#" class="btn btn-default" role="button"><span class="glyphicon glyphicon-heart">关注</span></a>' +
+                            '</p>\n' +
+                            '                                </div>\n' +
+                            '                            </div>\n' +
+                            '                        </div>\n' +
+                            '                    </div>'
+                    }
+                    $("#productListDiv").html(v_html);
+                }
+            }, error: function (e) {
+                console.log(e);
+                console.log("index页面查询goods失败")
+            }
+
+        })
+    }
+
+    function initCss() {
+        $('.all-sort-list2 > .item').hover(function () {
+            //父类分类列表容器的高度
+            $(this).addClass('hover');
+            $(this).children('.item-list').css('display', 'block');
+        }, function () {
+            $(this).removeClass('hover');
+            $(this).children('.item-list').css('display', 'none');
+        });
+        $('.item > .item-list > .close').click(function () {
+            $(this).parent().parent().removeClass('hover');
+            $(this).parent().hide();
+        });
+    }
+
+    var v_cate;
+
+    function cateIds() {//分类
+        $.ajax({
+            type: "get",
+            url: "http://localhost:9000/cate/api/cates",
+            success: function (result) {
+                if (result.code == 200) {
+                    v_cate = result.data;
+                    if (v_cate && v_cate.length > 0) {
+                        for (let cateId of v_cate) {
+                            if (cateId.fatherId == 0) {
+                                var v_html = '<div class="item">\n' +
+                                    '          <h3><a href="">' + cateId.cateName + '</a></h3>' +
+                                    '          <div class="item-list clearfix">' +
+                                    '             <div class="subitem" id="cateDiv_' + cateId.id + '" >' +
+                                    '              </div>' +
+                                    '          </div> ' +
+                                    '       </div>';
+                                $("#cateDiv").append(v_html);
+                                inioCateTow(cateId.id)
+                            }
+                        }
+                    }
+                }
+            }
+        })
+    }
+
+    function buy(sku) {
+        //sku为当前商品的id
+        var data = {"skuId": sku, "count": 1};
+        $.ajax({
+            type: "post",
+            url: "http://localhost:9000/shop-cart-api/api/cart/addCartItrm",
+            data: data,
+            beforeSend: function (xhr) {//设置头部信息
+                xhr.setRequestHeader(AUTH, $.cookie(TOKEN));
+            },
+            success: function (res) {
+                console.log(res);
+                if (res.code == 200) {
+                    //跳转到购物车页面
+                    location.href = "cart.html";
+                } else if (res.code == 6008 || res.code == 6010 || res.code == 6005) {//登录超时  信息不完整  头信息为空
+                    location.href = "list.html";//跳转到登录页面
+                }
+            }, error: function (e) {
+                console.log("添加购物车异常");
+            }
+        })
+    }
+
+    function inioCateTow(cateId) {
+
+        for (let cate of v_cate) {
+            if (cate.fatherId == cateId) {
+                var v_html = "<dl class='fore1' id='cateDiv_" + cate.id + "'>\n" +
+                    "  <dt><a href=''>" + cate.cateName + "</a></dt>" +
+                    "</dl>\n";
+                $("#cateDiv_" + cateId).append(v_html);
+                initCateTree(cate.id, cateId);
+            }
+        }
+    }
+
+    function initCateTree(cateId) {
+        var v_html = "<dd>";
+        for (let cateIds of v_cate) {
+            if (cateIds.fatherId == cateId) {
+                v_html += '<em><a href="">' + cateIds.cateName + '</a></em>'
+            }
+        }
+        v_html += "</dd>";
+        $("#cateDiv_" + cateId).append(v_html);
+        initCss();
+    }
+
+</script>
+</body>
+</html>

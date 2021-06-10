@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+    <link rel="stylesheet" href="../../js/bootstrap/css/bootstrap.min.css">
+    <link rel="icon" href="../../js/shop/assets/img/favicon.ico">
+    <link rel="stylesheet" type="text/css" href="../../js/shop/css/webbase.css"/>
+    <link rel="stylesheet" type="text/css" href="../../js/shop/css/pages-JD-index.css"/>
+    <link rel="stylesheet" type="text/css" href="../../js/shop/css/widget-jquery.autocomplete.css"/>
+    <link rel="stylesheet" type="text/css" href="../../js/shop/css/widget-cartPanelView.css"/>
+    <title>商场登录</title>
+</head>
+<body>
+<script src="../../js/jquery-3.3.1.js"></script>
+<script src="../../js/jquery.cookie.min.js"></script>
+<script src="../../js/bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../../js/shop/js/pages/index.js"></script>
+<!--定义的全局变量-->
+<script type="text/javascript" src="../../js/common/server_url.js"></script>
+<script src="../../js/bootbox/bootbox.min.js"></script>
+<script src="../../js/bootbox/bootbox.locales.min.js"></script>
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <form class="form-horizontal">
+
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">旧密码:</label>
+                    <div class="col-sm-4">
+                        <input type="password" class="form-control" id="oldPassWord" placeholder="请输入密码">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">新密码:</label>
+                    <div class="col-sm-4">
+                        <input type="password" class="form-control" id="password" placeholder="请输入密码">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">确认密码:</label>
+                    <div class="col-sm-4">
+                        <input type="password" class="form-control" id="configPassword" placeholder="请输入密码">
+                    </div>
+                </div>
+                <div style="text-align: center;">
+                    <button type="button" class="btn btn-primary" onclick="passwordNew()" id="loginId"><span
+                            class="glyphicon glyphicon-search"></span>提交
+                    </button>
+                    <button type="reset" class="btn btn-default"><span class="glyphicon glyphicon-refresh"></span>重置
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    function passwordNew() {
+        var param = {};
+        param.oldPassword = $("#oldPassWord").val();//旧密码
+        param.password = $("#password").val();//新密码
+        param.configPassword = $("#configPassword").val();//确认密码
+        //发送ajax请求 传递参数到后台
+        $.ajax({
+            type: "post",
+            url: server_url + "/meber/updatePassword",
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader(AUTH, $.cookie(TOKEN));
+            },
+            data: param,
+            success: function (result) {
+                if (result.code == 200) {//密码修改成功后跳转到用户登录
+                    //删除cookie
+                    $.removeCookie(TOKEN);
+                    //跳转到登录页面
+                    location.href = "list.html";
+                } else if (result.coe == 6017) {
+                    alert("原密码和新密码不能一致");
+                } else if (result.coe == 6001) {
+                    alert("新密码两次输入的不一致");
+                }
+            },
+        })
+
+    }
+
+
+</script>
+</body>
+</html>
