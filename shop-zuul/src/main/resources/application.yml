@@ -3,7 +3,7 @@ eureka:
     register-with-eureka: true #注册到eureka的注册中心
     fetch-registry: true  # 获取注册实例回来
     service-url:
-      defaultZone: http://localhost:8000/eureka  #  指定服务中心的位置
+      defaultZone: http://replica1:8002/eureka,http://localhost:8000/eureka  #  指定服务中心的位置
 
 
 

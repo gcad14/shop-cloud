@@ -5,8 +5,8 @@ eureka:
   instance:
     hostname: localhost
   client:
-    register-with-eureka: false #自己不注册自己
-    fetch-registry: false  # 不去检索其他服务
+    register-with-eureka: true #自己不注册自己
+    fetch-registry: true  # 不去检索其他服务
     service-url:
       defaultZone: http://replica1:8002/eureka  #  指定服务中心的位置
 #  server:

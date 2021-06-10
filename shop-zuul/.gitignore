@@ -1,9 +1,4 @@
 /target/
-#  如果是以！开头的则代表忽略这个  #
-
-## sts ##
-
-
 # IntelliJ IDEA #
 .idea
 *.iml
