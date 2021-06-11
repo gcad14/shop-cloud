@@ -1,13 +1,56 @@
+---
 server:
   port: 8000
 # 设置该服务中心的名字
 eureka:
   instance:
-    hostname: localhost
+    hostname: e1
   client:
     register-with-eureka: true #自己不注册自己
     fetch-registry: true  # 不去检索其他服务
     service-url:
-      defaultZone: http://replica1:8002/eureka  #  指定服务中心的位置
+      defaultZone: http://e2:8111/eureka/,http://e3:8222/eureka/  #  指定服务中心的位置
+  #  server:
+#  replica1
+  #    enable-self-preservation: false # 关闭保护模式
+spring:
+  profiles: reg1
+  application:
+    name: eureka
+---
+server:
+  port: 8111
+  # 设置该服务中心的名字
+eureka:
+  instance:
+    hostname: e2
+  client:
+    register-with-eureka: true #自己不注册自己
+    fetch-registry: true  # 不去检索其他服务
+    service-url:
+      defaultZone: http://e1:8000/eureka/,http://e3:8222/eureka/  #  指定服务中心的位置
+  #  server:
+  #    enable-self-preservation: false # 关闭保护模式
+spring:
+  profiles: reg2
+  application:
+    name: eureka
+---
+server:
+  port: 8222
+# 设置该服务中心的名字
+eureka:
+  instance:
+    hostname: e3
+  client:
+    register-with-eureka: true #自己不注册自己
+    fetch-registry: true  # 不去检索其他服务
+    service-url:
+      defaultZone: http://e1:8000/eureka/,http://e2:8111/eureka/  #  指定服务中心的位置
 #  server:
 #    enable-self-preservation: false # 关闭保护模式
+spring:
+  profiles: reg3
+  application:
+    name: eureka
+---

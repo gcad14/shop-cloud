@@ -3,7 +3,7 @@ eureka:
     register-with-eureka: true #注册到eureka的注册中心
     fetch-registry: true  # 获取注册实例回来
     service-url:
-      defaultZone: http://replica1:8002/eureka,http://localhost:8000/eureka  #  指定服务中心的位置
+      defaultZone: http://e1:8000/eureka/,http://e2:8111/eureka/,http://e3:8222/eureka/  #  指定服务中心的位置
 
 
 
@@ -31,14 +31,14 @@ spring:
     username: root
 server:
   port: 9000
-zuul:
-  routes:
-    shop-cate-api:
-      path: /cate/**
-    shop-goods-api:
-      path: /goods/**
-    shop-member-api:
-      path: /member/**
+#zuul:
+#  routes:
+#    shop-cate-api:
+#      path: /cate/**
+#    shop-goods-api:
+#      path: /goods/**
+#    shop-member-api:
+#      path: /member/**
 fh:
   shop:
     checkUrls: /api/meber/logut,/api/meber/findMember,/api/cart/addCartItrm,/api/cart/findCart,/api/cart/findCartCount,/api/cart/deleteCartItem,/api/cart/deleteBatch   # 需要登录后才能进行访问
